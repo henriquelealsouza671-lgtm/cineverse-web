@@ -4,11 +4,19 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// --- VARIANTES DE ANIMAÇÃO ---
+// --- VARIANTES DE ANIMAÇÃO CORRIGIDAS ---
 const pageVariants = {
   hidden: { opacity: 0, scale: 0.96 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] } },
-  exit: { opacity: 0, scale: 0.96, transition: { duration: 0.25, ease: [0.22, 1, 0.36, 1] } }
+  visible: { 
+    opacity: 1, 
+    scale: 1, 
+    transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] as any } // Correção de tipagem TS2322
+  },
+  exit: { 
+    opacity: 0, 
+    scale: 0.96, 
+    transition: { duration: 0.25, ease: [0.22, 1, 0.36, 1] as any } 
+  }
 };
 
 const staggerContainer = {
@@ -22,7 +30,11 @@ const staggerContainer = {
 
 const fadeUpItem = {
   hidden: { opacity: 0, y: 15 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] as any } // Correção de tipagem TS2322
+  }
 };
 
 export default function Login() {
@@ -49,7 +61,6 @@ export default function Login() {
     if (mensagem.includes('rate limit')) return 'Muitas tentativas seguidas. Respire um pouco e tente novamente em 1 minuto.';
     if (mensagem.includes('missing email')) return 'Por favor, preencha o campo de e-mail.';
     
-    // Se for um erro muito estranho que não mapeamos, ele mostra isso:
     return 'Ocorreu um erro de conexão. Tente novamente mais tarde.';
   };
 
@@ -110,6 +121,7 @@ export default function Login() {
       className="relative min-h-screen flex flex-col items-center justify-end overflow-hidden font-sans bg-[#050508] pb-12 px-5"
     >
       
+      {/* BACKGROUND */}
       <div 
         className="absolute top-0 inset-x-0 z-0 h-[60%] bg-cover bg-no-repeat opacity-90"
         style={{ backgroundImage: "url('/bg-fantasy.png')", backgroundPosition: "center 10%" }}
@@ -127,7 +139,6 @@ export default function Login() {
           <img src="/logo-cineverse.png" alt="Cineverse Logo" className="w-full h-auto object-contain drop-shadow-[0_0_20px_rgba(160,32,240,0.4)]" />
         </motion.div>
 
-        {/* AnimatePresence faz a mágica da transição entre os formulários */}
         <AnimatePresence mode="wait">
           {mode === 'verify' ? (
             <motion.div 
@@ -155,7 +166,7 @@ export default function Login() {
             </motion.div>
           ) : (
             <motion.div 
-              key={mode} // A key dinâmica faz o Framer Motion animar sempre que o mode mudar!
+              key={mode} 
               variants={staggerContainer}
               initial="hidden"
               animate="visible"
@@ -224,7 +235,7 @@ export default function Login() {
                       <Lock className="text-white/40 mr-3" size={22} />
                       <div className="flex flex-col flex-1">
                         <span className="text-[11px] text-white/70 font-medium mb-0.5">Senha</span>
-                        <input type={showPassword ? "text" : "password"} required value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••••" className="bg-transparent text-white focus:outline-none text-[15px] w-full tracking-widest" />
+                        <input type={showPassword ? "text" : "password"} required value={password} onChange={passwordValue => setPassword(passwordValue.target.value)} placeholder="••••••••••" className="bg-transparent text-white focus:outline-none text-[15px] w-full tracking-widest" />
                       </div>
                       <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-[#666] ml-2"><Eye size={20} /></button>
                     </div>

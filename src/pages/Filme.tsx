@@ -22,7 +22,7 @@ export default function Filme() {
   const [showTrailer, setShowTrailer] = useState(false);
 
   useEffect(() => {
-    // Rola para o topo sempre que o ID mudar (útil ao clicar num filme semelhante)
+    // Rola para o topo sempre que o ID mudar
     window.scrollTo(0, 0);
     carregarDadosDoFilme();
   }, [id]);
@@ -30,7 +30,7 @@ export default function Filme() {
   const carregarDadosDoFilme = async () => {
     setLoading(true);
     
-    // 1. Verificar se o sistema está em manutenção (Integração Admin)
+    // 1. Verificar se o sistema está em manutenção
     const { data: config } = await supabase.from('configuracoes').select('modo_manutencao').eq('id', 1).single();
     if (config?.modo_manutencao) {
       navigate('/'); 
@@ -53,8 +53,7 @@ export default function Filme() {
     }
     setFilme(data);
 
-    // 3. Busca Filmes Semelhantes (Exclui o atual)
-    // Dica Pro: Aqui poderia filtrar pelo mesmo 'genero', mas para já traz os últimos adicionados
+    // 3. Busca Filmes Semelhantes
     const { data: semelhantesData } = await supabase.from('filmes').select('*').neq('id', id).limit(6);
     if (semelhantesData) setFilmesSemelhantes(semelhantesData);
 
@@ -86,7 +85,7 @@ export default function Filme() {
       try {
         await supabase.from('favoritos').insert({ user_id: user.id, filme_id: id });
         setIsFavorito(true);
-      } catch (error) {
+      } catch (_error) { // Limpeza: Variável não utilizada tratada como _error
         setIsFavorito(true); 
       }
     }
@@ -100,7 +99,7 @@ export default function Filme() {
         text: `Venha assistir ${filme.titulo} no Cineverse Platinum!`,
         url: window.location.href
       });
-    } catch (e) {
+    } catch (_e) { // Limpeza: Variável não utilizada tratada como _e
       alert("Link do filme copiado!");
     }
   };
@@ -148,7 +147,7 @@ export default function Filme() {
         <Cast size={20} className="text-white/40 pointer-events-auto" />
       </nav>
 
-      {/* HERO BANNER (CAPA DO FILME) */}
+      {/* HERO BANNER */}
       <div className="relative h-[65vh] w-full">
         <img src={filme.banner_url || filme.poster_url} alt="Capa" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#020205] via-[#020205]/60 to-transparent" />
@@ -157,7 +156,6 @@ export default function Filme() {
         <div className="absolute bottom-0 inset-x-0 px-6 pb-6 flex flex-col justify-end z-10">
           <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}>
             
-            {/* TAGS (4K, VIP, etc) */}
             <div className="flex flex-wrap items-center gap-2 mb-4">
               <span className="px-2 py-0.5 rounded bg-[#9B2CBA]/20 border border-[#9B2CBA]/50 text-[#9B2CBA] text-[9px] font-black uppercase tracking-widest inline-block">Filme VIP</span>
               {(filme.tags || []).map((tag: string, i: number) => (
@@ -180,7 +178,7 @@ export default function Filme() {
         </div>
       </div>
 
-      {/* AÇÕES (PLAY, TRAILER, FAVORITO) - Agora sincronizado com Serie.tsx */}
+      {/* AÇÕES PRINCIPAIS */}
       <div className="px-6 mt-4 flex gap-3 md:max-w-xl relative z-20">
         <motion.button 
           whileTap={{ scale: 0.95 }}
@@ -206,7 +204,7 @@ export default function Filme() {
         </motion.button>
       </div>
 
-      {/* AÇÕES SECUNDÁRIAS (DOWNLOAD E SHARE) */}
+      {/* AÇÕES SECUNDÁRIAS */}
       <div className="px-6 mt-6 grid grid-cols-2 gap-4 md:max-w-xl">
         <motion.button whileTap={{ scale: 0.97 }} onClick={() => alert("Baixando em segundo plano...")} className="py-3 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center gap-3 text-white/60 hover:text-white transition-colors">
           <Download size={16} />
@@ -218,7 +216,7 @@ export default function Filme() {
         </motion.button>
       </div>
 
-      {/* SINOPSE E DETALHES */}
+      {/* SINOPSE */}
       <div className="px-6 mt-10 space-y-6 md:max-w-3xl">
         <div>
           <h3 className="text-[10px] font-black text-[#9B2CBA] uppercase tracking-[0.4em] mb-3 border-l-2 border-[#9B2CBA] pl-3">Sinopse da Obra</h3>
@@ -237,7 +235,7 @@ export default function Filme() {
         </div>
       </div>
 
-      {/* CARROSSEL DE FILMES SEMELHANTES */}
+      {/* FILMES SEMELHANTES */}
       {filmesSemelhantes.length > 0 && (
         <div className="mt-16 space-y-4">
           <div className="px-6">

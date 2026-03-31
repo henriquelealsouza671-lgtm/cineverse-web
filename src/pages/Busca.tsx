@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ArrowLeft, Sparkles, PlayCircle, Flame, Clapperboard, Compass, Loader2 } from 'lucide-react';
+import { Search, ArrowLeft, Compass, Loader2 } from 'lucide-react'; // Limpeza de imports não utilizados
 import { supabase } from '../supabase';
 
 // IMPORTAÇÃO DA SUA NAVBAR LEVITANTE
@@ -40,7 +40,6 @@ export default function Busca() {
 
       const unificado: any[] = [];
       
-      // IMPORTANTE: Garantir que o campo 'genero' existe no seu banco
       if (filmes) {
         filmes.forEach((f: any) => unificado.push({
           id: f.id,
@@ -69,13 +68,12 @@ export default function Busca() {
     carregarDadosSincronizados();
   }, []);
 
-  // 3. LÓGICA DE FILTRO (CORRIGIDA PARA IGNORAR MAIÚSCULAS/MINÚSCULAS)
+  // 3. LÓGICA DE FILTRO
   useEffect(() => {
     const filtrados = catalogoReal.filter(item => {
       const nomeFilme = item.titulo.toLowerCase();
       const termoBusca = busca.toLowerCase();
       
-      // Verifica se o gênero do filme bate exatamente com o botão clicado
       const bateCategoria = filtroCategoria === 'Tudo' || 
         item.genero.trim().toLowerCase() === filtroCategoria.trim().toLowerCase();
 
@@ -115,7 +113,6 @@ export default function Busca() {
           />
         </div>
 
-        {/* LISTA DE CATEGORIAS DINÂMICAS */}
         <div className="flex gap-3 overflow-x-auto pb-2 custom-scrollbar">
           {categorias.map(cat => (
             <motion.button

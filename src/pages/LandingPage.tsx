@@ -1,7 +1,7 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion'; // Limpeza: AnimatePresence removido
 import { 
   Play, Download, ShieldCheck, Zap, Monitor, Smartphone, 
-  Tv, Globe, Star, ArrowRight, Layers, Activity 
+  Tv, Globe, Activity // Limpeza: Star, ArrowRight e Layers removidos
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 

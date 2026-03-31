@@ -22,12 +22,13 @@ export default function Favoritos() {
     
     if (user) {
       // 1. Busca os IDs que este usuário específico favoritou
-      const { data: favs, error } = await supabase
+      // Removida a variável 'error' não utilizada para satisfazer o TypeScript
+      const { data: favs } = await supabase
         .from('favoritos')
         .select('filme_id')
         .eq('user_id', user.id);
 
-      if (!error && favs && favs.length > 0) {
+      if (favs && favs.length > 0) {
         const ids = favs.map((fav: any) => fav.filme_id);
         
         // 2. Busca os detalhes reais desses filmes
