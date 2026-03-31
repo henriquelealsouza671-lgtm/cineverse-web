@@ -1,0 +1,50 @@
+name: Cineverse Android Build
+
+on:
+  push:
+    branches: [ main ] # Dispara sempre que houver um push na branch principal
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do Código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Instalar Dependências
+        run: npm install # Instala React, Tailwind v4 e Capacitor
+
+      - name: Build da Web App (Vite)
+        run: npm run build # Gera a pasta /dist com seu design Obsidian
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }} # Proteção de dados VIP
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+
+      - name: Configurar Java (JDK 17)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Sincronizar Capacitor
+        run: |
+          npx cap sync android # Une o código Web ao envelope Android
+
+      - name: Gerar APK (Gradle)
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug # Gera o APK de teste/distribuição rápida
+
+      - name: Upload do APK Gerado
+        uses: actions/upload-artifact@v4
+        with:
+          name: cineverse-platinum-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
