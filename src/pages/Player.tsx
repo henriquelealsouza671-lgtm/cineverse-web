@@ -3,7 +3,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Play, Pause, ArrowLeft, SkipBack, SkipForward, 
-  Volume2, VolumeX, Settings, Loader2, RotateCcw, AlertCircle,
+  Settings, Loader2, RotateCcw, AlertCircle,
   Lock, Unlock, Gauge, PictureInPicture, Maximize
 } from 'lucide-react';
 import { supabase } from '../supabase';
@@ -26,13 +26,13 @@ export default function Player() {
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState('00:00');
   const [duration, setDuration] = useState('00:00');
-  const [isMuted, setIsMuted] = useState(false);
+  const [] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [isLandscape, setIsLandscape] = useState(false);
   
   const [isLocked, setIsLocked] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
-  const [showSpeedFeedback, setShowSpeedFeedback] = useState(false);
+  const [, setShowSpeedFeedback] = useState(false);
   const [skipFeedback, setSkipFeedback] = useState<'forward' | 'backward' | null>(null);
 
   const qualidade = localStorage.getItem('cv_qualidade') || '4K Ultra HD';

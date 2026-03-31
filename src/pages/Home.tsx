@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, } from 'framer-motion';
 import { Play, Info, Plus, Search, Bell, User, Loader2, Star } from 'lucide-react';
 import { supabase } from '../supabase';
 import BottomNav from '../components/BottomNav';
