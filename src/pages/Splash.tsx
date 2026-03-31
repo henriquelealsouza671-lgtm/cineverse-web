@@ -7,7 +7,7 @@ export default function Splash() {
   useEffect(() => {
     // Garante que o vídeo tente reproduzir assim que o componente montar
     if (videoRef.current) {
-      videoRef.current.play().catch(error => {
+      videoRef.current.play().catch(_error => { // CORREÇÃO: Variável não utilizada alterada para _error
         console.log("Autoplay bloqueado pelo navegador, aguardando interação ou permissão.");
       });
     }
@@ -18,7 +18,6 @@ export default function Splash() {
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 1 }}
-      // Alterado para bg-black para que as bordas do vídeo se misturem perfeitamente com o fundo
       className="fixed inset-0 z-[9999] bg-black flex items-center justify-center overflow-hidden"
     >
       {/* VÍDEO DE INTRODUÇÃO */}
@@ -27,11 +26,10 @@ export default function Splash() {
         src="/intro.mp4" 
         muted
         playsInline
-        // CORREÇÃO: Usar apenas object-contain para que o vídeo nunca seja cortado
         className="w-full h-full object-contain"
       />
 
-      {/* OVERLAY OPCIONAL: TEXTO DE PROTOCOLO */}
+      {/* OVERLAY DE PROTOCOLO */}
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -43,7 +41,6 @@ export default function Splash() {
         </p>
       </motion.div>
 
-      {/* GRADIENTE DE FUNDO PARA SUAVIZAR AS BORDAS */}
       <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black pointer-events-none" />
     </motion.div>
   );

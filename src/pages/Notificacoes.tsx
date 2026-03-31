@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Bell, BellOff, Loader2, Sparkles, Trash2 } from 'lucide-react';
+import { ArrowLeft, Bell, BellOff, Loader2, Sparkles, } from 'lucide-react';
 import { supabase } from '../supabase';
 import BottomNav from '../components/BottomNav';
 

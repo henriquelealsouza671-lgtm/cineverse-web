@@ -21,7 +21,7 @@ export default function Player() {
   const [userId, setUserId] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(true);
-  const [isBuffering, setIsBuffering] = useState(false); // NOVO: Estado de travamento de rede
+  const [isBuffering, setIsBuffering] = useState(false); 
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState('00:00');
@@ -127,14 +127,16 @@ export default function Player() {
     return () => {
       window.removeEventListener('resize', checkOrientation);
       if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
-      if (window.screen.orientation && window.screen.orientation.unlock) window.screen.orientation.unlock();
+      // CORREÇÃO TS2339
+      if (window.screen.orientation && (window.screen.orientation as any).unlock) (window.screen.orientation as any).unlock();
     };
   }, []);
 
   const forceLandscape = async () => {
     try {
       if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
-      if (window.screen.orientation && window.screen.orientation.lock) await window.screen.orientation.lock('landscape');
+      // CORREÇÃO TS2339
+      if (window.screen.orientation && (window.screen.orientation as any).lock) await (window.screen.orientation as any).lock('landscape');
     } catch (error) {
       console.log("O dispositivo bloqueou a rotação automática");
     }
@@ -223,12 +225,11 @@ export default function Player() {
     }
   };
 
-  // NOVO: Função de Picture in Picture Premium
   const togglePiP = async () => {
     if (document.pictureInPictureElement) {
       await document.exitPictureInPicture();
-    } else if (videoRef.current && document.pictureInPictureEnabled) {
-      await videoRef.current.requestPictureInPicture();
+    } else if (videoRef.current && (document as any).pictureInPictureEnabled) {
+      await (videoRef.current as any).requestPictureInPicture();
     }
   };
 
@@ -243,7 +244,8 @@ export default function Player() {
   const sairDoPlayer = async () => {
     salvarProgresso();
     if (document.fullscreenElement) await document.exitFullscreen().catch(() => {});
-    if (window.screen.orientation && window.screen.orientation.unlock) window.screen.orientation.unlock();
+    // CORREÇÃO TS2339
+    if (window.screen.orientation && (window.screen.orientation as any).unlock) (window.screen.orientation as any).unlock();
     navigate(-1);
   };
 
@@ -276,12 +278,11 @@ export default function Player() {
         </div>
       )}
 
-      {/* ÁREAS INVISÍVEIS PARA DUPLO CLIQUE */}
+      {/* ÁREAS DE INTERAÇÃO */}
       <div className="absolute inset-y-0 left-0 w-1/3 z-30" onDoubleClick={() => skip(-10)} />
       <div className="absolute inset-y-0 right-0 w-1/3 z-30" onDoubleClick={() => skip(10)} />
       <div className="absolute inset-y-0 left-1/3 right-1/3 z-30" onClick={togglePlay} />
 
-      {/* FEEDBACK VISUAL DE DUPLO CLIQUE */}
       <AnimatePresence>
         {skipFeedback === 'backward' && (
           <motion.div initial={{ opacity: 0, scale: 0.8, x: -20 }} animate={{ opacity: 1, scale: 1, x: 0 }} exit={{ opacity: 0 }} className="absolute left-1/4 top-1/2 -translate-y-1/2 z-40 bg-black/40 p-4 rounded-full backdrop-blur-sm pointer-events-none text-white flex flex-col items-center">
@@ -297,15 +298,6 @@ export default function Player() {
         )}
       </AnimatePresence>
 
-      {/* FEEDBACK DE VELOCIDADE */}
-      <AnimatePresence>
-        {showSpeedFeedback && (
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute top-24 right-1/2 translate-x-1/2 z-40 bg-[#9B2CBA]/80 text-white px-6 py-2 rounded-full font-black uppercase tracking-widest text-[10px] backdrop-blur-md pointer-events-none shadow-[0_0_20px_#9B2CBA]">
-             Velocidade: {playbackSpeed}x
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       <video
         ref={videoRef}
         src={conteudo.video_url}
@@ -315,19 +307,17 @@ export default function Player() {
         onLoadedData={handleLoadedData}
         onPause={() => { setIsPlaying(false); salvarProgresso(); }}
         onPlay={() => setIsPlaying(true)}
-        onWaiting={() => setIsBuffering(true)}   // NOVO: Mostra loading se a net falhar
-        onPlaying={() => setIsBuffering(false)}  // NOVO: Esconde loading quando voltar
+        onWaiting={() => setIsBuffering(true)}   
+        onPlaying={() => setIsBuffering(false)}  
         playsInline
       />
 
-      {/* LOADER CENTRAL (Carregamento inicial ou Buffering de rede) */}
       {(loading || isBuffering) && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/60 z-40 pointer-events-none">
           <Loader2 className="animate-spin text-[#9B2CBA] shadow-[0_0_30px_#9B2CBA] rounded-full" size={50} />
         </div>
       )}
 
-      {/* BOTÃO DE DESBLOQUEIO */}
       <AnimatePresence>
         {isLocked && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute bottom-10 left-1/2 -translate-x-1/2 z-[60]">
@@ -338,14 +328,13 @@ export default function Player() {
         )}
       </AnimatePresence>
 
-      {/* CONTROLOS PRINCIPAIS */}
       <AnimatePresence>
         {showControls && !isLocked && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="absolute inset-0 z-50 flex flex-col justify-between">
             <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-black/95 to-transparent pointer-events-none" />
             <div className="absolute bottom-0 inset-x-0 h-48 bg-gradient-to-t from-black/95 via-black/80 to-transparent pointer-events-none" />
 
-            {/* HEADER - AGORA COM O TÍTULO PARA POUPAR ESPAÇO EM BAIXO */}
+            {/* HEADER */}
             <header className="relative flex items-start md:items-center justify-between p-4 md:p-8">
               <div className="flex items-center gap-4 pointer-events-auto">
                 <button onClick={sairDoPlayer} className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-all shadow-2xl">
@@ -367,10 +356,9 @@ export default function Player() {
               </div>
             </header>
 
-            {/* BARRA INFERIOR - AGORA COM MAIS ESPAÇO */}
+            {/* BARRA INFERIOR */}
             <div className="relative p-4 md:p-8 pb-6 md:pb-8 w-full max-w-5xl mx-auto space-y-3 md:space-y-4 pointer-events-auto">
               
-              {/* Barra de Progresso */}
               <div className="flex items-center gap-3 md:gap-4 group">
                 <span className="text-[10px] md:text-xs font-bold tracking-widest w-10 md:w-12 text-center text-white drop-shadow-md">{currentTime}</span>
                 <div className="relative flex-1 h-1.5 md:h-2 bg-white/20 rounded-full overflow-hidden cursor-pointer group-hover:h-3 transition-all">
@@ -380,10 +368,8 @@ export default function Player() {
                 <span className="text-[10px] md:text-xs font-bold tracking-widest w-10 md:w-12 text-center text-white/60 drop-shadow-md">{duration}</span>
               </div>
 
-              {/* Botões - Distribuídos em toda a largura */}
               <div className="flex items-center justify-between pt-1">
                 
-                {/* Controlos de Reprodução */}
                 <div className="flex items-center gap-4 md:gap-8">
                   <button onClick={() => skip(-10)} className="text-white/80 hover:text-white transition-colors p-2">
                     <SkipBack size={20} className="md:size-6" />
@@ -396,25 +382,18 @@ export default function Player() {
                   <button onClick={() => skip(10)} className="text-white/80 hover:text-white transition-colors p-2">
                     <SkipForward size={20} className="md:size-6" />
                   </button>
-                  
-                  <button onClick={() => setIsMuted(!isMuted)} className="text-white/80 hover:text-white transition-colors ml-2 md:ml-4 p-2 hidden sm:block">
-                    {isMuted ? <VolumeX size={20} className="md:size-6" /> : <Volume2 size={20} className="md:size-6" />}
-                  </button>
                 </div>
 
-                {/* Utilidades à Direita (Speed, PiP, Fullscreen) */}
                 <div className="flex items-center gap-3 md:gap-6">
                   <button onClick={changeSpeed} className="text-white/80 hover:text-white transition-colors p-2 flex items-center gap-1 group">
                     <Gauge size={18} className="group-hover:text-[#9B2CBA] transition-colors md:size-5" />
                     <span className="text-[10px] md:text-xs font-black hidden sm:inline">{playbackSpeed}x</span>
                   </button>
                   
-                  {/* NOVO: Botão de Picture in Picture */}
                   <button onClick={togglePiP} className="text-white/80 hover:text-[#9B2CBA] transition-colors p-2 hidden sm:block" title="Mini Player">
                     <PictureInPicture size={18} className="md:size-5" />
                   </button>
                   
-                  {/* NOVO: Botão Maximizar Nativo */}
                   <button onClick={toggleFullscreen} className="text-white/80 hover:text-[#9B2CBA] transition-colors p-2">
                     <Maximize size={18} className="md:size-5" />
                   </button>
