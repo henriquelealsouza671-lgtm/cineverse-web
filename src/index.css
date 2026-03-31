@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+body {
+  background-color: #0B0C10; /* O fundo de cinema escuro */
+  color: white;
+  margin: 0;
+  padding: 0;
+}
+
+/* ==========================================
+   CINEVERSE OBSIDIAN - OCULTAR SCROLLBARS
+   ========================================== */
+
+/* Esconde a barra nos carrosséis (Chrome, Safari e Edge) */
+.hide-scrollbar::-webkit-scrollbar,
+.custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Esconde a barra no Firefox e navegadores antigos */
+.hide-scrollbar,
+.custom-scrollbar {
+  -ms-overflow-style: none;  /* IE e Edge */
+  scrollbar-width: none;     /* Firefox */
+}
